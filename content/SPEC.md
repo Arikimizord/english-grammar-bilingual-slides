@@ -28,7 +28,7 @@ NOTES_FRAG = [
 
 ```python
 slide(mid, theme, foot_left, code="GRAMMAR", body="")
-# theme: "light" 或 "dark"；foot_left: 如 "M04 · There be 的基本句型"；code: 如 "M04"
+# theme: "light" 或 "dark"；foot_left: 如 "M02 · 名词的可数与不可数"；code: 如 "M02"
 
 head(kicker, cn_title, en_title, lead=None, xl_style="")
 # kicker: 英文短语 + 中文，如 "There Be · 说『有』的句型"
@@ -100,16 +100,20 @@ mp(label_q, choices, ans)
 
 | 文件 | 模块 id | code | 分区 | 页面主题（3 内容 + 1 练习） | 内容页主题色序列 |
 |---|---|---|---|---|---|
-| there-be.py | m4-there-be | M04 | Ⅰ 句子基础 | ①基本句型(就近原则) ②否定与疑问 ③时态变化 ④练习 | dark, light, dark, light |
-| nouns.py | m5-nouns | M05 | Ⅰ | ①可数与不可数 ②复数规则 ③所有格与复合名词 ④练习 | light, dark, light, dark |
-| articles.py | m6-articles | M06 | Ⅰ | ①a / an(音素判断) ②the 的用法 ③零冠词 ④练习 | dark, light, dark, light |
-| pronouns.py | m7-pronouns | M07 | Ⅰ | ①人称代词 ②物主与反身 ③不定代词 ④练习 | light, dark, light, dark |
-| sentence-elements.py | m2-sentence-elements | M02 | Ⅰ | ①主语与谓语 ②宾语与表语 ③定语与状语 ④练习 | dark, light, dark, light |
-| sentence-types.py | m4-sentence-types | M08 | Ⅰ | ①简单句 ②并列句 ③复合句 ④练习 | dark, light, dark, light |
-| reported-speech.py | m14-reported-speech | M14 | Ⅱ 动词系统 | ①陈述句转述 ②人称时间变化 ③疑问句转述 ④练习 | dark, light, dark, light |
-| prepositions.py | m24-prepositions | M24 | Ⅳ 特殊结构 | ①时间介词 ②地点介词 ③固定搭配 ④练习 | dark, light, dark, light |
-| questions.py | m25-questions | M25 | Ⅳ | ①一般疑问句 ②特殊疑问句 ③反意疑问句 ④练习 | light, dark, light, dark |
-| punctuation.py | m26-punctuation | M26 | Ⅴ 实战应用 | ①逗号与句末符号 ②撇号与引号 ③大写规则 ④练习 | dark, light, dark, light |
+| verbs.py | pos-verbs | M05 | Ⅰ 词法篇 | ①动词的分类(vt/vi/系/助/情态) ②五种基本形式 ③及物不及物与系表 ④练习 | light, dark, light, dark |
+| adjectives.py | pos-adjectives | M06 | Ⅰ | ①两种位置(定语/表语) ②多个形容词排序 ③-ed与-ing ④练习 | light, dark, light, dark |
+| adverbs.py | pos-adverbs | M07 | Ⅰ | ①五大类 ②-ly拼写规则 ③位置 ④练习 | light, dark, light, dark |
+| numerals.py | pos-numerals | M08 | Ⅰ | ①基数词 ②序数词 ③确数约数/年份分数 ④练习 | light, dark, light, dark |
+| there-be.py | m4-there-be | M13 | Ⅱ 句法篇 | ①基本句型(就近原则) ②否定与疑问 ③时态变化 ④练习 | dark, light, dark, light |
+| nouns.py | m5-nouns | M02 | Ⅰ 词法篇 | ①可数与不可数 ②复数规则 ③所有格与复合名词 ④练习 | light, dark, light, dark |
+| articles.py | m6-articles | M03 | Ⅰ | ①a / an(音素判断) ②the 的用法 ③零冠词 ④练习 | dark, light, dark, light |
+| pronouns.py | m7-pronouns | M04 | Ⅰ | ①人称代词 ②物主与反身 ③不定代词 ④练习 | light, dark, light, dark |
+| sentence-elements.py | m2-sentence-elements | M11 | Ⅱ 句法篇 | ①主语与谓语 ②宾语与表语 ③定语与状语 ④练习 | dark, light, dark, light |
+| sentence-types.py | m4-sentence-types | M14 | Ⅱ | ①简单句 ②并列句 ③复合句 ④练习 | dark, light, dark, light |
+| reported-speech.py | m14-reported-speech | M21 | Ⅲ 动词系统 | ①陈述句转述 ②人称时间变化 ③疑问句转述 ④练习 | dark, light, dark, light |
+| prepositions.py | m24-prepositions | M09 | Ⅰ 词法篇 | ①时间介词 ②地点介词 ③固定搭配 ④练习 | dark, light, dark, light |
+| questions.py | m25-questions | M15 | Ⅱ 句法篇 | ①一般疑问句 ②特殊疑问句 ③反意疑问句 ④练习 | light, dark, light, dark |
+| punctuation.py | m26-punctuation | M30 | Ⅴ 特殊结构与实战 | ①逗号与句末符号 ②撇号与引号 ③大写规则 ④练习 | dark, light, dark, light |
 
 slide-id 命名：`<模块id去掉m前缀>-<主题>`，如 `m4-therebe-basic`、`m4-therebe-neg`、`m4-therebe-tense`、`m4-therebe-practice`；
 `m5-noun-count`、`m5-noun-plural`、`m5-noun-poss`、`m5-noun-practice`；其余类推（articles→m6-art-*，pronouns→m7-pron-*，

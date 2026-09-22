@@ -16,7 +16,9 @@ _skill = os.path.join(os.environ.get("GUIZANG_SKILL",
         r"E:" + chr(92) + "ClaudeCode" + chr(92) + "claude-config" + chr(92) + "skills" + chr(92) + "guizang-ppt-skill"),
         "assets", "template.html")
 SRC = os.environ.get("GRAMMAR_TEMPLATE") or (_local if os.path.exists(_local) else _skill)
-OUT_DIR = os.environ.get("GRAMMAR_OUT") or os.path.join(_here, "ppt")
+# Output defaults to the repo ROOT (index.html) so static hosts like
+# Tencent EdgeOne Pages / GitHub Pages can serve the deck directly.
+OUT_DIR = os.environ.get("GRAMMAR_OUT") or _here
 OUT = os.path.join(OUT_DIR, "index.html")
 
 html = open(SRC, encoding="utf-8").read()
@@ -83,8 +85,8 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
 /* ============ 目录页行(类化,便于矮视口压缩) ============ */
 .toc-row{all:unset;cursor:pointer;display:flex;align-items:baseline;gap:.9em;width:100%;text-align:left;padding:.2vh 0;border-top:1px solid rgba(127,127,127,.25)}
 .toc-code{font-family:var(--mono);font-size:12px;letter-spacing:.18em;opacity:.5;white-space:nowrap}
-.toc-cn{font-family:var(--serif-zh);font-weight:600;font-size:max(17px,min(1.4vw,2.49vh));white-space:nowrap}
-.toc-en{font-family:var(--serif-en);font-style:italic;font-weight:400;font-size:max(13px,min(1.05vw,1.87vh));opacity:.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc-cn{font-family:var(--serif-zh);font-weight:600;font-size:max(15px,min(1.4vw,2.05vh));white-space:nowrap;line-height:1.2}
+.toc-en{font-family:var(--serif-en);font-style:italic;font-weight:400;font-size:max(12px,min(1.05vw,1.55vh));opacity:.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* ============ 矮视口(笔记本带浏览器条 / 超宽屏)紧凑模式 ============ */
 @media (max-height:840px){
   .learn-card{gap:.3vh;padding-top:.5vh}
@@ -99,9 +101,9 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
   .h-sub{margin-top:.2vh!important}
   .lead{margin-top:.4vh!important}
   .toc-row{padding:0}
-  .toc-code{font-size:10px}
-  .toc-cn{font-size:max(14px,min(1.05vw,1.95vh))}
-  .toc-en{font-size:11px}
+  .toc-code{font-size:9px}
+  .toc-cn{font-size:max(13px,min(1.05vw,1.8vh))}
+  .toc-en{font-size:10px}
 }
 """
 html = html.replace("</style>", EXTRA_CSS + "</style>", 1)
@@ -141,43 +143,51 @@ html = html.replace("</body>", NAV_JS + "</body>", 1)
 # ------------------------------------------------------------------
 # 4) Module metadata + slide templates
 # ------------------------------------------------------------------
-PART1 = ("Ⅰ", "句子基础", "SENTENCE BASICS")
-PART2 = ("Ⅱ", "动词系统", "THE VERB SYSTEM")
-PART3 = ("Ⅲ", "从句系统", "CLAUSES")
-PART4 = ("Ⅳ", "特殊结构", "SPECIAL STRUCTURES")
-PART5 = ("Ⅴ", "实战应用", "PRACTICE")
+PART1 = ("Ⅰ", "词法篇", "MORPHOLOGY · WORD CLASSES")
+PART2 = ("Ⅱ", "句法篇", "SYNTAX")
+PART3 = ("Ⅲ", "动词系统", "THE VERB SYSTEM")
+PART4 = ("Ⅳ", "从句与一致", "CLAUSES & AGREEMENT")
+PART5 = ("Ⅴ", "特殊结构与实战", "ADVANCED & PRACTICE")
 
 MODULES = [
-    ("m1-parts-of-speech",     "M01", "词性",        "Parts of Speech",              PART1, "hero dark",  "一个字就是一个身份。"),
-    ("m2-sentence-elements",   "M02", "句子成分",     "Sentence Elements",            PART1, "hero light", "把句子拆成零件。"),
-    ("m3-five-patterns",       "M03", "五种基本句型",  "Five Basic Patterns",         PART1, "hero dark",  "所有长句都能长出。"),
-    ("m4-there-be",            "M04", "There be 句型", "There Be Structure",         PART1, "hero light", "说「有」，用 there be。"),
-    ("m5-nouns",               "M05", "名词",        "Nouns",                       PART1, "hero dark",  "可不可数，差别很大。"),
-    ("m6-articles",            "M06", "冠词",        "Articles",                    PART1, "hero light", "小小 a / the，大大讲究。"),
-    ("m7-pronouns",            "M07", "代词",        "Pronouns",                    PART1, "hero dark",  "替名词出场的人。"),
-    ("m4-sentence-types",      "M08", "句子的种类",   "Simple · Compound · Complex", PART1, "hero light", "一根梁，还是三根梁。"),
-    ("m5-tenses",              "M09", "动词时态",     "The Twelve Tenses",           PART2, "hero dark",  "时间是动词的刻度。"),
-    ("m6-modal-verbs",         "M10", "情态动词",     "Modal Verbs",                 PART2, "hero light", "态度与可能性的开关。"),
-    ("m7-passive-voice",       "M11", "被动语态",     "Passive Voice",               PART2, "hero dark",  "谁做，还是谁被做。"),
-    ("m8-non-finite-verbs",    "M12", "非谓语动词",   "to do · doing · done",        PART2, "hero light", "动词的三个分身。"),
-    ("m9-subjunctive",         "M13", "虚拟语气",     "Subjunctive Mood",            PART2, "hero dark",  "假如的世界。"),
-    ("m14-reported-speech",    "M14", "直接与间接引语", "Reported Speech",           PART2, "hero light", "把别人的话转个头。"),
-    ("m10-noun-clauses",       "M15", "名词性从句",   "Noun Clauses",                PART3, "hero dark",  "把从句整个当名词。"),
-    ("m11-attribute-clauses",  "M16", "定语从句",     "Attributive Clauses",         PART3, "hero light", "跑到名词后面的形容词。"),
-    ("m12-adverbial-clauses",  "M17", "状语从句",     "Adverbial Clauses",           PART3, "hero dark",  "条件 · 原因 · 让步。"),
-    ("m13-agreement",          "M18", "主谓一致",     "Subject-Verb Agreement",      PART3, "hero light", "主语和谓语，人数对齐。"),
-    ("m14-comparison",         "M19", "比较等级",     "Comparison",                  PART4, "hero dark",  "谁比谁，更怎么样。"),
-    ("m15-inversion",          "M20", "倒装句",      "Inversion",                   PART4, "hero light", "倒过来，更有劲。"),
-    ("m16-emphasis",           "M21", "强调句",      "Emphasis",                    PART4, "hero dark",  "把重点抬到台前。"),
-    ("m17-ellipsis",           "M22", "省略句",      "Ellipsis",                    PART4, "hero light", "能省则省，不碍理解。"),
-    ("m18-conjunctions",       "M23", "连词与并列",   "Conjunctions & Coordination", PART4, "hero dark",  "把句子粘起来。"),
-    ("m24-prepositions",       "M24", "介词",        "Prepositions",                PART4, "hero light", "小词定乾坤。"),
-    ("m25-questions",          "M25", "疑问句",      "Questions",                   PART4, "hero dark",  "会问，才会交流。"),
-    ("m26-punctuation",        "M26", "标点与大写",   "Punctuation & Capitalization", PART5, "hero light", "细节见功夫。"),
-    ("m19-common-mistakes",    "M27", "高频易错点",   "Common Mistakes",             PART5, "hero dark",  "中国学生的老坑。"),
-    ("m20-exam-types",         "M28", "题型速览",     "Exam Question Types",         PART5, "hero light", "考场最爱怎么考。"),
+    # ---- Part Ⅰ 词法篇:十大词类(词性总览是上位概念,统领 M02–M10) ----
+    ("m1-parts-of-speech",     "M01", "词性总览",     "Parts of Speech",             PART1, "hero dark",  "十大词类，一张地图。"),
+    ("m5-nouns",               "M02", "名词",        "Nouns",                       PART1, "hero light", "可不可数，差别很大。"),
+    ("m6-articles",            "M03", "冠词",        "Articles",                    PART1, "hero light",  "小小 a / the，大大讲究。"),
+    ("m7-pronouns",            "M04", "代词",        "Pronouns",                    PART1, "hero dark", "替名词出场的人。"),
+    ("pos-verbs",              "M05", "动词",        "Verbs",                       PART1, "hero dark",  "句子的心脏，五副面孔。"),
+    ("pos-adjectives",         "M06", "形容词",       "Adjectives",                  PART1, "hero light", "给名词上色的人。"),
+    ("pos-adverbs",            "M07", "副词",        "Adverbs",                     PART1, "hero dark",  "修饰动词与形容词。"),
+    ("pos-numerals",           "M08", "数词",        "Numerals",                    PART1, "hero light", "数得清，才算数得明白。"),
+    ("m24-prepositions",       "M09", "介词",        "Prepositions",                PART1, "hero light",  "小词定乾坤。"),
+    ("m18-conjunctions",       "M10", "连词",        "Conjunctions",                PART1, "hero light", "把词与句粘起来。"),
+    # ---- Part Ⅱ 句法篇:词如何组成句子 ----
+    ("m2-sentence-elements",   "M11", "句子成分",     "Sentence Elements",           PART2, "hero dark",  "把句子拆成零件。"),
+    ("m3-five-patterns",       "M12", "五种基本句型",  "Five Basic Patterns",         PART2, "hero dark", "所有长句都能长出。"),
+    ("m4-there-be",            "M13", "There be 句型", "There Be Structure",         PART2, "hero light",  "说「有」，用 there be。"),
+    ("m4-sentence-types",      "M14", "句子的种类",   "Simple · Compound · Complex", PART2, "hero light", "一根梁，还是三根梁。"),
+    ("m25-questions",          "M15", "疑问句",      "Questions",                   PART2, "hero dark",  "会问，才会交流。"),
+    # ---- Part Ⅲ 动词系统 ----
+    ("m5-tenses",              "M16", "动词时态",     "The Twelve Tenses",           PART3, "hero light", "时间是动词的刻度。"),
+    ("m6-modal-verbs",         "M17", "情态动词",     "Modal Verbs",                 PART3, "hero light",  "态度与可能性的开关。"),
+    ("m7-passive-voice",       "M18", "被动语态",     "Passive Voice",               PART3, "hero dark", "谁做，还是谁被做。"),
+    ("m8-non-finite-verbs",    "M19", "非谓语动词",   "to do · doing · done",        PART3, "hero light",  "动词的三个分身。"),
+    ("m9-subjunctive",         "M20", "虚拟语气",     "Subjunctive Mood",            PART3, "hero light", "假如的世界。"),
+    ("m14-reported-speech",    "M21", "直接与间接引语", "Reported Speech",           PART3, "hero light",  "把别人的话转个头。"),
+    # ---- Part Ⅳ 从句与一致 ----
+    ("m10-noun-clauses",       "M22", "名词性从句",   "Noun Clauses",                PART4, "hero light", "把从句整个当名词。"),
+    ("m11-attribute-clauses",  "M23", "定语从句",     "Attributive Clauses",         PART4, "hero dark",  "跑到名词后面的形容词。"),
+    ("m12-adverbial-clauses",  "M24", "状语从句",     "Adverbial Clauses",           PART4, "hero light", "条件 · 原因 · 让步。"),
+    ("m13-agreement",          "M25", "主谓一致",     "Subject-Verb Agreement",      PART4, "hero dark",  "主语和谓语，人数对齐。"),
+    # ---- Part Ⅴ 特殊结构与实战 ----
+    ("m14-comparison",         "M26", "比较等级",     "Comparison",                  PART5, "hero light", "谁比谁，更怎么样。"),
+    ("m15-inversion",          "M27", "倒装句",      "Inversion",                   PART5, "hero dark",  "倒过来，更有劲。"),
+    ("m16-emphasis",           "M28", "强调句",      "Emphasis",                    PART5, "hero light", "把重点抬到台前。"),
+    ("m17-ellipsis",           "M29", "省略句",      "Ellipsis",                    PART5, "hero dark",  "能省则省，不碍理解。"),
+    ("m26-punctuation",        "M30", "标点与大写",   "Punctuation & Capitalization", PART5, "hero light", "细节见功夫。"),
+    ("m19-common-mistakes",    "M31", "高频易错点",   "Common Mistakes",             PART5, "hero dark",  "中国学生的老坑。"),
+    ("m20-exam-types",         "M32", "题型速览",     "Exam Question Types",         PART5, "hero light", "考场最爱怎么考。"),
 ]
-
 def divider(mid):
     code, cn, en, part, theme, tag = MODULES_by_id[mid][1:8] if False else (None,None,None,None,None,None)
     mid, code, cn, en, part, theme, tag = MODULES_by_id[mid]
@@ -1799,6 +1809,10 @@ def pilot_for(mid):
     "m7-pronouns":         ["m7-pron-personal","m7-pron-possessive","m7-pron-indefinite","m7-pron-practice"],
     "m4-sentence-types":   ["m8-type-simple","m8-type-compound","m8-type-complex","m8-type-practice"],
     "m14-reported-speech": ["m14-rep-statement","m14-rep-changes","m14-rep-questions","m14-rep-practice"],
+    "pos-verbs":           ["pos-verbs-kinds","pos-verbs-forms","pos-verbs-transitive","pos-verbs-practice"],
+    "pos-adjectives":      ["pos-adj-position","pos-adj-order","pos-adj-ed-ing","pos-adj-practice"],
+    "pos-adverbs":         ["pos-adv-kinds","pos-adv-formation","pos-adv-position","pos-adv-practice"],
+    "pos-numerals":        ["pos-num-cardinal","pos-num-ordinal","pos-num-usage","pos-num-practice"],
     "m24-prepositions":    ["m24-prep-time","m24-prep-place","m24-prep-fixed","m24-prep-practice"],
     "m25-questions":       ["m25-ques-yesno","m25-ques-wh","m25-ques-tag","m25-ques-practice"],
     "m26-punctuation":     ["m26-punct-basic","m26-punct-apos","m26-punct-caps","m26-punct-practice"],
@@ -1809,7 +1823,7 @@ def pilot_for(mid):
 # ------------------------------------------------------------------
 def cover():
     return """<section class="slide hero dark" data-slide-id="cover">
-  <div class="chrome"><div>English Grammar · 英语语法</div><div>M01–M28 · NN / TOTAL</div></div>
+  <div class="chrome"><div>English Grammar · 英语语法</div><div>M01–M32 · NN / TOTAL</div></div>
   <div class="frame" style="display:grid; gap:4vh; align-content:center; min-height:80vh">
     <div class="kicker" data-anim>Bilingual Grammar Guide · 双语精讲</div>
     <h1 class="h-hero" style="font-size:9vw" data-anim>英语语法</h1>
@@ -1820,7 +1834,7 @@ def cover():
     </p>
     <div class="meta-row" data-anim>
       <button type="button" data-goto="contents" style="all:unset;cursor:pointer;font-family:var(--serif-zh);font-weight:600;font-size:max(16px,min(1.4vw,2.49vh));border-bottom:1px solid currentColor;padding-bottom:6px">进入目录 · Contents &rarr;</button>
-      <span>·</span><span>28 模块 · M01–M28</span>
+      <span>·</span><span>32 模块 · M01–M32</span>
     </div>
     <div style="font-family:var(--mono);font-size:max(12px,min(0.9vw,1.60vh));letter-spacing:.14em;opacity:.78" data-anim>作者 · Adam Wang &middot; 英语教师 &middot; arikimizord@163.com</div>
   </div>

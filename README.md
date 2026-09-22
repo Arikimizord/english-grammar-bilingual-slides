@@ -2,7 +2,7 @@
 
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/Content-CC_BY--SA_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
 [![Template: AGPL-3.0](https://img.shields.io/badge/Template-AGPL--3.0-blue.svg)](./template/README.md)
-[![Slides](https://img.shields.io/badge/Slides-147-green.svg)](./ppt/index.html)
+[![Slides](https://img.shields.io/badge/Slides-167-green.svg)](./ppt/index.html)
 
 一套**单文件、零依赖、免费开源**的高校英语语法双语教学课件（网页 PPT）。面向英语基础较弱的中国学生（高职 / 专升本 / 大学基础段），中文讲规则、英文给例句，教室投影后排也能看清。
 
@@ -14,7 +14,7 @@ A single-file, zero-dependency, open-source **bilingual (Chinese–English) Engl
 
 ## ✨ 特性 / Features
 
-- **28 个模块 · 5 大部分 / 28 modules in 5 parts**：句子基础（词性、成分、句型、There be、名词、冠词、代词、句子种类）→ 动词系统（时态、情态、被动、非谓语、虚拟、引语）→ 从句系统 → 特殊结构（比较、倒装、强调、省略、连词、介词、疑问句）→ 实战应用（标点、易错点、题型）。
+- **32 个模块 · 5 大部分（由浅入深的层级框架）/ 32 modules in 5 hierarchical parts**：Ⅰ 词法篇（词性总览 → 名词/冠词/代词/动词/形容词/副词/数词/介词/连词，十大词类全部覆盖）→ Ⅱ 句法篇（句子成分、五大基本句型、There be、句子的种类、疑问句）→ Ⅲ 动词系统（时态、情态、被动、非谓语、虚拟、引语）→ Ⅳ 从句与一致（名词性/定语/状语从句、主谓一致）→ Ⅴ 特殊结构与实战（比较、倒装、强调、省略、标点、易错点、题型）。
 - **每个知识点一个配方 / one recipe per point**：规则（中英）＋ 双语例句 ＋「常见错误」提示框 ＋ 随堂练习。
 - **Aha! 点击揭晓 / click-to-reveal practice**：每个练习先让学生想，点击按钮才显示答案与解析。
 - **随时跳转 / jump anywhere**：首页 ＋ 目录页 ＋ 左上角常驻「⌂ 首页 / ☰ 目录」按钮，任何页面一键返回；每个模块可独立开讲，适合多课时拆分使用。
@@ -23,7 +23,7 @@ A single-file, zero-dependency, open-source **bilingual (Chinese–English) Engl
 
 ## 🚀 使用 / Usage
 
-无需安装任何东西：**直接下载 [`ppt/index.html`](./ppt/index.html)，双击用浏览器打开即可上课。**
+无需安装任何东西：**直接下载 [`index.html`](./index.html)，双击用浏览器打开即可上课。**（仓库根目录即最终课件，可直接部署到 EdgeOne Pages / GitHub Pages 等静态托管）
 
 No installation needed: just download `ppt/index.html` and open it in a browser.
 
@@ -52,7 +52,7 @@ python build.py        # 需要 Python 3.8+，无第三方依赖 / Python 3.8+, 
 ## 📁 目录结构 / Repository layout
 
 ```
-├── ppt/index.html          ← 最终课件（双击即用）/ the deck (self-contained)
+├── index.html              ← 最终课件（双击即用，可在仓库根目录直接静态部署）/ the deck (self-contained)
 ├── build.py                ← 组装脚本 / assembler
 ├── content/                ← 模块内容片段（每模块一文件）/ module content fragments
 │   └── SPEC.md             ← 内容编写规范 / authoring spec
