@@ -1,0 +1,13 @@
+# temp / build artifacts
+__pycache__/
+*.pyc
+
+# probe copies (generated)
+_probe*.html
+
+# OS
+Thumbs.db
+.DS_Store
+
+# local bug-report screenshots (not for publication)
+ppt/images/
