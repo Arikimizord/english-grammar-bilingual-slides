@@ -37,6 +37,160 @@ html = html.replace(
 )
 
 # ------------------------------------------------------------------
+# 1b) Multi-platform patches to the template (v3)
+#     目标:零 CDN、低硬件开销、手机/平板/桌面全适配
+# ------------------------------------------------------------------
+
+# -- 移动浏览器:视口扩展(刘海屏安全区) + 浏览器框主题色 --
+html = html.replace(
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">'
+    '<meta name="theme-color" content="#08090b">',
+    1,
+)
+
+# -- Google Fonts 异步化:原 <link rel=stylesheet> 阻塞首屏,被墙网络下白屏等到超时;
+#    改为 media="print" onload 切换 —— 可达则加载增强字体,不可达立即可用回退字体 --
+_m = re.search(r'<link href="https://fonts\.googleapis\.com/css2[^"]*" rel="stylesheet">', html)
+if _m:
+    _font_href = _m.group(0)[len('<link href="'):-len('" rel="stylesheet">')]
+    html = html.replace(
+        _m.group(0),
+        f'<link href="{_font_href}" rel="stylesheet" media="print" onload="this.media=\'all\'">',
+        1,
+    )
+
+# -- 删除未使用的 lucide CDN(deck 内 0 处 data-lucide 图标,国内 unpkg 常不可达) --
+html = html.replace(
+    '<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>\n<script>lucide.createIcons();</script>\n',
+    "", 1,
+)
+
+# -- Motion One(CDN 动效引擎)→ 内置 WAAPI 动画(行为一致,零外部依赖) --
+MOTION_JS = """
+<!-- ============ 内置动效引擎(原生 WAAPI · 零外部依赖) ============
+     行为与原 Motion One 版一致:翻页中段触发当前页 [data-anim] 入场;
+     低功耗模式(B)或 prefers-reduced-motion 下静态显示;
+     无 CDN / 无外部脚本,离线双击打开动效同样完整。
+-->
+<script>
+(function(){
+  if(!Element.prototype.animate) return; /* 远古浏览器:不动效,CSS 兜底显示 */
+  document.body.classList.add('motion-ready');
+  var EASE='cubic-bezier(.22,1,.36,1)';
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var pipeStep=-1,lastIdx=-1;
+  function kill(el){ if(el.getAnimations) el.getAnimations().forEach(function(a){a.cancel();}); }
+  function resetAnims(sl){ sl.querySelectorAll('[data-anim]').forEach(function(el){kill(el);el.style.opacity='';el.style.transform='';}); }
+  function revealStatic(sl){ sl.querySelectorAll('[data-anim]').forEach(function(el){kill(el);el.style.opacity='1';el.style.transform='none';}); }
+  function anim(els,from,to,dur,delayBase,step){
+    els.forEach(function(el,i){
+      el.animate([from,to],{duration:dur*1000,delay:(delayBase+i*step)*1000,easing:EASE,fill:'both'});
+    });
+  }
+  function playSlide(i){
+    var sl=slides[i]; if(!sl) return;
+    lastIdx=i;
+    var recipe=sl.dataset.animate||(sl.classList.contains('hero')?'hero':'cascade');
+    if(window.__lowPowerMode){ revealStatic(sl); return; }
+    if(recipe==='pipeline'){
+      pipeStep=-1;
+      sl.querySelectorAll('[data-anim]').forEach(function(el){el.style.opacity='0.15';el.style.transform='none';});
+      return;
+    }
+    resetAnims(sl);
+    var all=[].slice.call(sl.querySelectorAll('[data-anim]'));
+    if(!all.length) return;
+    if(recipe==='directional'){
+      var lefts=all.filter(function(el){return el.dataset.anim==='left';});
+      var divs=all.filter(function(el){return el.dataset.anim==='divider';});
+      var rights=all.filter(function(el){return el.dataset.anim==='right';});
+      var others=all.filter(function(el){return ['left','right','divider'].indexOf(el.dataset.anim)<0;});
+      if(others.length) anim(others,{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'},.6,.15,.1);
+      if(lefts.length) anim(lefts,{opacity:0,transform:'translateX(-24px)'},{opacity:1,transform:'translateX(0)'},.8,.35,0);
+      if(divs.length) anim(divs,{opacity:0},{opacity:.25},.5,.9,0);
+      if(rights.length) anim(rights,{opacity:0,transform:'translateX(24px)'},{opacity:1,transform:'translateX(0)'},.8,1.0,0);
+      return;
+    }
+    if(recipe==='quote'){
+      var lines=all.filter(function(el){return el.dataset.anim==='line';});
+      var rest=all.filter(function(el){return el.dataset.anim!=='line';});
+      if(rest.length) anim(rest,{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'},.6,.2,.12);
+      if(lines.length) anim(lines,{opacity:.35,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'},.8,.5,.55);
+      return;
+    }
+    if(recipe==='hero'){ anim(all,{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'translateY(0)'},.9,.2,.16); return; }
+    anim(all,{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'translateY(0)'},.75,.15,.1);
+  }
+  function pipeAdvance(){
+    if(window.__lowPowerMode) return false;
+    var sl=slides[lastIdx];
+    if(!sl||sl.dataset.animate!=='pipeline') return false;
+    var steps=[].slice.call(sl.querySelectorAll('[data-anim="step"]'));
+    var arrows=[].slice.call(sl.querySelectorAll('[data-anim="arrow"]'));
+    if(pipeStep>=steps.length-1) return false;
+    pipeStep++;
+    anim([steps[pipeStep]],{opacity:.15,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'},.5,0,0);
+    if(pipeStep>0&&arrows[pipeStep-1]) anim([arrows[pipeStep-1]],{opacity:.15},{opacity:.7},.3,.15,0);
+    return true;
+  }
+  window.__playSlide=playSlide;
+  window.__pipeAdvance=pipeAdvance;
+  playSlide(window.__currentSlideIndex||0);
+})();
+</script>
+"""
+html = re.sub(
+    r"<!-- ============ Motion One 动效引擎.*?</script>\s*(?=</body>)",
+    MOTION_JS.lstrip() + "\n",
+    html, count=1, flags=re.S,
+)
+
+# -- WebGL 背景:触屏/小屏/低内存设备只渲染一帧静态纹理(零逐帧 GPU 开销),
+#    桌面端切到后台自动暂停,回来继续;移动端 DPR 封顶 1.5 --
+html = html.replace(
+    "const d=Math.min(window.devicePixelRatio||1,2);",
+    "const d=Math.min(window.devicePixelRatio||1,matchMedia('(pointer: coarse)').matches?1.5:2);",
+    1,
+)
+html = html.replace(
+    """startGL();
+addEventListener('ppt-low-power-change', e=>{e.detail.on ? stopGL() : startGL();});""",
+    """/* v3:按设备能力门控 —— 触屏 / 小屏 / 低内存 = 静态单帧,不再逐帧渲染 */
+const __quietDevice = matchMedia('(pointer: coarse)').matches
+  || Math.min(screen.width, screen.height) < 740
+  || (navigator.deviceMemory && navigator.deviceMemory <= 4);
+function drawGLOnce(){
+  try{
+    if(!drawDark) drawDark = bootGL('bg-dark', FS_DARK);
+    if(!drawLight) drawLight = bootGL('bg-light', FS_LIGHT);
+    drawDark(0); drawLight(0);
+  }catch(e){}
+}
+function startGLSmart(){ if(__quietDevice){ drawGLOnce(); return; } startGL(); }
+addEventListener('resize', ()=>{ if(__quietDevice && !glRAF) drawGLOnce(); });
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden){ stopGL(); }
+  else if(!__quietDevice && !window.__lowPowerMode){ startGL(); }
+});
+startGLSmart();
+addEventListener('ppt-low-power-change', e=>{ e.detail.on ? stopGL() : startGLSmart(); });""",
+    1,
+)
+
+# -- 滚轮翻页守卫:目标在可滚动的 .frame 内时先滚动内容、不翻页
+#    (仅滚动阅读模式下的帧可滚;桌面端 scrollHeight==clientHeight,行为不变) --
+html = html.replace(
+    """addEventListener('wheel',e=>{
+  wheelAcc+=e.deltaY+e.deltaX;""",
+    """addEventListener('wheel',e=>{
+  const sf=e.target&&e.target.closest?e.target.closest('.slide .frame'):null;
+  if(sf&&sf.scrollHeight>sf.clientHeight+2){wheelAcc=0;return;}
+  wheelAcc+=e.deltaY+e.deltaX;""",
+    1,
+)
+
+# ------------------------------------------------------------------
 # 2) extra CSS before </style>
 # ------------------------------------------------------------------
 EXTRA_CSS = """
@@ -45,6 +199,8 @@ EXTRA_CSS = """
 #nav-back button{all:unset;display:inline-flex;align-items:center;gap:.5em;cursor:pointer;padding:6px 12px;border:1px solid currentColor;border-radius:3px;opacity:.75;color:inherit;white-space:nowrap}
 #nav-back button:hover,#nav-back button:focus-visible{opacity:1;text-decoration:underline;text-underline-offset:.3em}
 body.ppt-audience #nav-back,body.ppt-preview #nav-back{display:none!important}
+/* 两簇按钮是 body 直接子元素,继承 body 纸色 —— 浅色页要翻成墨色才可见 */
+body.light-bg #nav-back,body.light-bg #mob-nav{color:var(--ink)}
 .learn-card{display:flex;flex-direction:column;gap:.7vh;padding-top:.9vh;border-top:1px solid currentColor;border-color:rgba(127,127,127,.32);min-width:0}
 .learn-card .lc-t{display:flex;align-items:baseline;gap:.8em;flex-wrap:wrap}
 .learn-card .lc-t .cn{font-family:var(--serif-zh);font-weight:700;font-size:max(26px,min(2.1vw,3.74vh));line-height:1.15}
@@ -62,7 +218,6 @@ body.ppt-audience #nav-back,body.ppt-preview #nav-back{display:none!important}
 .practice .p-q .qnum{font-family:var(--serif-en);font-style:italic;font-weight:600;margin-right:.5em}
 .sv-main{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(0,1fr);gap:1.2vh 2.6vw;flex:1;align-content:center;margin-top:.6vh}
 .sv-cols{display:grid;grid-template-columns:1fr 1fr;gap:3vw;flex:1;align-content:center;margin-top:1vh}
-media (max-width:900px){.sv-cols{grid-template-columns:1fr}}
 /* 课堂投影可读性:lead 加大 */
 .lead{font-size:max(20px,min(1.9vw,3.38vh))}
 /* ============ Aha! 点击揭晓练习 ============ */
@@ -105,13 +260,85 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
   .toc-cn{font-size:max(13px,min(1.05vw,1.8vh))}
   .toc-en{font-size:10px}
 }
+/* ============ 多平台适配层 (v3):手机 / 平板 / 桌面全适配 ============ */
+html{-webkit-text-size-adjust:100%}
+body{overscroll-behavior:none}
+button,.aha,.toc-row{touch-action:manipulation}
+/* iOS/Android 浏览器地址栏:100dvh 修正视口高度 */
+@supports (height:100dvh){ .slide{height:100dvh} }
+/* 移动端翻页/总览悬浮球(JS 注入,桌面隐藏) */
+#mob-nav{display:none;position:fixed;right:4vw;bottom:calc(3vh + env(safe-area-inset-bottom,0px));flex-direction:column;gap:12px;z-index:35}
+#mob-nav button{all:unset;cursor:pointer;width:52px;height:52px;border-radius:50%;border:1px solid currentColor;display:flex;align-items:center;justify-content:center;font-family:var(--serif-en);font-size:24px;opacity:.75;background:rgba(127,127,127,.14);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#mob-nav button:active{opacity:1;transform:scale(.94)}
+body.ppt-presenter #mob-nav,body.ppt-audience #mob-nav,body.ppt-preview #mob-nav{display:none!important}
+/* ---- 滚动阅读模式:窄屏(手机/平板竖屏)或超矮视口(横屏手机) ----
+   页面改为「每页内可上下滚动」,网格降列,字号改按视口自适应,
+   触控目标加大,适配刘海屏安全区;桌面端(>820px 且 >520px)完全不受影响。 */
+@media (max-width:820px), (max-height:520px), (max-width:1100px) and (max-height:800px){
+  .slide{padding:calc(3vh + env(safe-area-inset-top,0px)) 5.5vw calc(3.5vh + env(safe-area-inset-bottom,0px)) 5.5vw}
+  .slide .frame{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scrollbar-width:none;padding-right:1.5vw}
+  .slide .frame::-webkit-scrollbar{display:none}
+  .slide .frame{min-height:0!important}
+  .chrome,.foot{font-size:9px;letter-spacing:.12em}
+  /* 顶部空间让给 nav-back 按钮簇:chrome 左侧品牌文字在移动端是冗余的 */
+  .chrome>div:first-child{display:none}
+  .chrome>div:last-child{margin-left:auto}
+  .kicker{font-size:10px;margin-bottom:1.2vh}
+  .h-xl{white-space:normal!important;font-size:max(24px,min(6.8vw,9vh))!important;line-height:1.18!important;margin-top:.5vh}
+  .h-hero{font-size:min(13vw,18vh)!important;line-height:1.05!important}
+  .h-sub{font-size:max(15px,min(4vw,5.5vh))!important;white-space:normal!important}
+  .display{font-size:min(17vw,24vh)!important}
+  .display-zh{font-size:min(15vw,22vh)!important}
+  .lead{font-size:max(15px,min(4.4vw,6.5vh))!important;max-width:100%!important}
+  .learn-card{gap:.55vh;padding-top:1vh}
+  .learn-card .lc-t .cn{font-size:max(20px,min(5.6vw,7vh))}
+  .learn-card .lc-t .en{font-size:max(15px,min(3.8vw,5vh))}
+  .learn-card .lc-rule{font-size:max(15px,min(4vw,5.5vh))}
+  .ex-line{font-size:max(16px,min(4.4vw,6vh));line-height:1.4}
+  .ex-gl{font-size:max(13px,min(3.5vw,5vh))}
+  .mist .m-label{font-size:10px}
+  .mist .m-body{font-size:max(15px,min(3.9vw,5.5vh))}
+  .practice .p-label{font-size:10px}
+  .practice .p-q{font-size:max(16px,min(4.2vw,6vh))}
+  .mini-p{font-size:max(14px,min(3.6vw,5.2vh))}
+  .mini-p .mp-label{font-size:10px}
+  .mini-p .ans,.p-q .ans{font-size:max(14px,min(3.5vw,5vh));padding:1vh 2.5vw}
+  .aha{font-size:13px;padding:9px 16px;opacity:.85}
+  .sv-main{grid-template-columns:1fr 1fr!important;gap:1.6vh 5vw}
+  .sv-cols{grid-template-columns:1fr!important;gap:1vh}
+  .toc-grid{grid-template-columns:1fr!important;gap:1.2vh!important}
+  .toc-row{padding:1vh 0}
+  .toc-code{font-size:11px}
+  .toc-cn{font-size:max(15px,min(4.4vw,6vh))!important}
+  .toc-en{font-size:max(13px,min(3.4vw,4.8vh))}
+  .ip-brand{top:calc(1.6vh + env(safe-area-inset-top,0px));right:5.5vw;font-size:max(15px,min(4vw,5.5vh))}
+  #hint{display:none!important}
+  #nav{display:none!important}
+  #nav-back{left:4vw;top:calc(1.6vh + env(safe-area-inset-top,0px))}
+  #nav-back button{font-size:13px;padding:10px 14px;opacity:.9;background:rgba(127,127,127,.14);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  #mob-nav{display:flex}
+  #overview>div[style]{grid-template-columns:repeat(2,1fr)!important}
+}
+@media (max-width:560px){
+  .sv-main{grid-template-columns:1fr!important}
+  /* 窄屏放不下 IP 字样与页码同行,隐藏避免与 chrome 碰撞 */
+  .ip-brand{display:none}
+}
+@media (min-width:561px) and (max-width:820px){
+  .ip-brand{top:5.5vh}
+}
 """
 html = html.replace("</style>", EXTRA_CSS + "</style>", 1)
 
 # ------------------------------------------------------------------
-# 3) NAV JS before </body>
+# 3) NAV JS before </body>(含常驻首页/目录按钮簇 v3 修复:此前未插入 deck)
 # ------------------------------------------------------------------
-NAV_JS = """
+NAV_BACK_HTML = """<div id="nav-back">
+  <button type="button" data-goto="cover">⌂ 首页</button>
+  <button type="button" data-goto="contents">☰ 目录</button>
+</div>
+"""
+NAV_JS = NAV_BACK_HTML + """
 <script>
 (function(){
   document.addEventListener('click',function(e){
@@ -128,12 +355,43 @@ NAV_JS = """
     }
     var g = e.target.closest('[data-goto]');
     if(!g) return;
-    if(!g) return;
     e.preventDefault();
     var id = g.getAttribute('data-goto');
     var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
     var i = slides.findIndex(function(s){return s.getAttribute('data-slide-id')===id;});
     if(i>=0 && window.go) go(i,{force:true});
+  });
+})();
+/* 圆点窗口化:页数多时只显示当前页附近的圆点(首尾常驻),避免溢出屏幕 */
+(function(){
+  var dots = Array.prototype.slice.call(document.querySelectorAll('#nav .dot'));
+  if(!dots.length) return;
+  var cur = 0;
+  function upd(){
+    dots.forEach(function(d,i){
+      d.style.display = (i===0 || i===dots.length-1 || Math.abs(i-cur)<=5) ? '' : 'none';
+    });
+  }
+  var _go = window.go;
+  if(_go){
+    window.go = function(n,o){ var r=_go(n,o); cur=Math.max(0,Math.min(dots.length-1,n)); upd(); return r; };
+  }
+  upd();
+})();
+/* 移动端翻页/总览悬浮球(桌面 CSS 隐藏) */
+(function(){
+  var box = document.createElement('div');
+  box.id = 'mob-nav';
+  box.innerHTML =
+    '<button type="button" id="mob-prev" aria-label="上一页">&#8249;</button>' +
+    '<button type="button" id="mob-grid" aria-label="总览选页">&#9776;</button>' +
+    '<button type="button" id="mob-next" aria-label="下一页">&#8250;</button>';
+  document.body.appendChild(box);
+  box.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    if(b.id === 'mob-prev') go(idx-1);
+    else if(b.id === 'mob-next') go(idx+1);
+    else if(b.id === 'mob-grid' && window.toggleOverview) toggleOverview();
   });
 })();
 </script>
@@ -201,7 +459,7 @@ def divider(mid):
     <h1 class="h-hero" style="font-size:8vw" data-anim>{cn}</h1>
     <h2 class="h-sub" data-anim>{en}</h2>
     <p class="lead" style="max-width:55vw" data-anim>{tag}</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part {pnum} · {pcn} · {cn}</div><div>— · —</div></div>
 </section>"""
@@ -1869,7 +2127,7 @@ def contents():
   <div class="frame" style="display:flex; flex-direction:column">
     <div class="kicker" data-anim>Contents · 目录</div>
     <h2 class="h-xl" style="white-space:nowrap;font-size:min(4.5vw,8vh)" data-anim>轻轻一点，去哪一章</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8vh 2.2vw;align-content:start;flex:1;min-height:0;margin-top:.6vh">{left}{mid}{right}</div>
+    <div class="toc-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8vh 2.2vw;align-content:start;flex:1;min-height:0;margin-top:.6vh">{left}{mid}{right}</div>
   </div>
   <div class="ip-brand"><span class="lwa-text">Learn with Adam</span><span class="lwa-dot"></span></div>
   <div class="foot"><div>目录 · Contents</div><div>⌂ 首页随时回去</div></div>

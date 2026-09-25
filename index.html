@@ -2,11 +2,11 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#08090b">
 <title>英语语法双语精讲 · English Grammar Guide for Vocational College</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
   :root{
     /* ============ 主题色(默认:🖋 墨水经典) ============
@@ -494,6 +494,8 @@
 #nav-back button{all:unset;display:inline-flex;align-items:center;gap:.5em;cursor:pointer;padding:6px 12px;border:1px solid currentColor;border-radius:3px;opacity:.75;color:inherit;white-space:nowrap}
 #nav-back button:hover,#nav-back button:focus-visible{opacity:1;text-decoration:underline;text-underline-offset:.3em}
 body.ppt-audience #nav-back,body.ppt-preview #nav-back{display:none!important}
+/* 两簇按钮是 body 直接子元素,继承 body 纸色 —— 浅色页要翻成墨色才可见 */
+body.light-bg #nav-back,body.light-bg #mob-nav{color:var(--ink)}
 .learn-card{display:flex;flex-direction:column;gap:.7vh;padding-top:.9vh;border-top:1px solid currentColor;border-color:rgba(127,127,127,.32);min-width:0}
 .learn-card .lc-t{display:flex;align-items:baseline;gap:.8em;flex-wrap:wrap}
 .learn-card .lc-t .cn{font-family:var(--serif-zh);font-weight:700;font-size:max(26px,min(2.1vw,3.74vh));line-height:1.15}
@@ -511,7 +513,6 @@ body.ppt-audience #nav-back,body.ppt-preview #nav-back{display:none!important}
 .practice .p-q .qnum{font-family:var(--serif-en);font-style:italic;font-weight:600;margin-right:.5em}
 .sv-main{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(0,1fr);gap:1.2vh 2.6vw;flex:1;align-content:center;margin-top:.6vh}
 .sv-cols{display:grid;grid-template-columns:1fr 1fr;gap:3vw;flex:1;align-content:center;margin-top:1vh}
-media (max-width:900px){.sv-cols{grid-template-columns:1fr}}
 /* 课堂投影可读性:lead 加大 */
 .lead{font-size:max(20px,min(1.9vw,3.38vh))}
 /* ============ Aha! 点击揭晓练习 ============ */
@@ -553,6 +554,73 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
   .toc-code{font-size:9px}
   .toc-cn{font-size:max(13px,min(1.05vw,1.8vh))}
   .toc-en{font-size:10px}
+}
+/* ============ 多平台适配层 (v3):手机 / 平板 / 桌面全适配 ============ */
+html{-webkit-text-size-adjust:100%}
+body{overscroll-behavior:none}
+button,.aha,.toc-row{touch-action:manipulation}
+/* iOS/Android 浏览器地址栏:100dvh 修正视口高度 */
+@supports (height:100dvh){ .slide{height:100dvh} }
+/* 移动端翻页/总览悬浮球(JS 注入,桌面隐藏) */
+#mob-nav{display:none;position:fixed;right:4vw;bottom:calc(3vh + env(safe-area-inset-bottom,0px));flex-direction:column;gap:12px;z-index:35}
+#mob-nav button{all:unset;cursor:pointer;width:52px;height:52px;border-radius:50%;border:1px solid currentColor;display:flex;align-items:center;justify-content:center;font-family:var(--serif-en);font-size:24px;opacity:.75;background:rgba(127,127,127,.14);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#mob-nav button:active{opacity:1;transform:scale(.94)}
+body.ppt-presenter #mob-nav,body.ppt-audience #mob-nav,body.ppt-preview #mob-nav{display:none!important}
+/* ---- 滚动阅读模式:窄屏(手机/平板竖屏)或超矮视口(横屏手机) ----
+   页面改为「每页内可上下滚动」,网格降列,字号改按视口自适应,
+   触控目标加大,适配刘海屏安全区;桌面端(>820px 且 >520px)完全不受影响。 */
+@media (max-width:820px), (max-height:520px), (max-width:1100px) and (max-height:800px){
+  .slide{padding:calc(3vh + env(safe-area-inset-top,0px)) 5.5vw calc(3.5vh + env(safe-area-inset-bottom,0px)) 5.5vw}
+  .slide .frame{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scrollbar-width:none;padding-right:1.5vw}
+  .slide .frame::-webkit-scrollbar{display:none}
+  .slide .frame{min-height:0!important}
+  .chrome,.foot{font-size:9px;letter-spacing:.12em}
+  /* 顶部空间让给 nav-back 按钮簇:chrome 左侧品牌文字在移动端是冗余的 */
+  .chrome>div:first-child{display:none}
+  .chrome>div:last-child{margin-left:auto}
+  .kicker{font-size:10px;margin-bottom:1.2vh}
+  .h-xl{white-space:normal!important;font-size:max(24px,min(6.8vw,9vh))!important;line-height:1.18!important;margin-top:.5vh}
+  .h-hero{font-size:min(13vw,18vh)!important;line-height:1.05!important}
+  .h-sub{font-size:max(15px,min(4vw,5.5vh))!important;white-space:normal!important}
+  .display{font-size:min(17vw,24vh)!important}
+  .display-zh{font-size:min(15vw,22vh)!important}
+  .lead{font-size:max(15px,min(4.4vw,6.5vh))!important;max-width:100%!important}
+  .learn-card{gap:.55vh;padding-top:1vh}
+  .learn-card .lc-t .cn{font-size:max(20px,min(5.6vw,7vh))}
+  .learn-card .lc-t .en{font-size:max(15px,min(3.8vw,5vh))}
+  .learn-card .lc-rule{font-size:max(15px,min(4vw,5.5vh))}
+  .ex-line{font-size:max(16px,min(4.4vw,6vh));line-height:1.4}
+  .ex-gl{font-size:max(13px,min(3.5vw,5vh))}
+  .mist .m-label{font-size:10px}
+  .mist .m-body{font-size:max(15px,min(3.9vw,5.5vh))}
+  .practice .p-label{font-size:10px}
+  .practice .p-q{font-size:max(16px,min(4.2vw,6vh))}
+  .mini-p{font-size:max(14px,min(3.6vw,5.2vh))}
+  .mini-p .mp-label{font-size:10px}
+  .mini-p .ans,.p-q .ans{font-size:max(14px,min(3.5vw,5vh));padding:1vh 2.5vw}
+  .aha{font-size:13px;padding:9px 16px;opacity:.85}
+  .sv-main{grid-template-columns:1fr 1fr!important;gap:1.6vh 5vw}
+  .sv-cols{grid-template-columns:1fr!important;gap:1vh}
+  .toc-grid{grid-template-columns:1fr!important;gap:1.2vh!important}
+  .toc-row{padding:1vh 0}
+  .toc-code{font-size:11px}
+  .toc-cn{font-size:max(15px,min(4.4vw,6vh))!important}
+  .toc-en{font-size:max(13px,min(3.4vw,4.8vh))}
+  .ip-brand{top:calc(1.6vh + env(safe-area-inset-top,0px));right:5.5vw;font-size:max(15px,min(4vw,5.5vh))}
+  #hint{display:none!important}
+  #nav{display:none!important}
+  #nav-back{left:4vw;top:calc(1.6vh + env(safe-area-inset-top,0px))}
+  #nav-back button{font-size:13px;padding:10px 14px;opacity:.9;background:rgba(127,127,127,.14);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  #mob-nav{display:flex}
+  #overview>div[style]{grid-template-columns:repeat(2,1fr)!important}
+}
+@media (max-width:560px){
+  .sv-main{grid-template-columns:1fr!important}
+  /* 窄屏放不下 IP 字样与页码同行,隐藏避免与 chrome 碰撞 */
+  .ip-brand{display:none}
+}
+@media (min-width:561px) and (max-width:820px){
+  .ip-brand{top:5.5vh}
 }
 </style>
 </head>
@@ -624,7 +692,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
   <div class="frame" style="display:flex; flex-direction:column">
     <div class="kicker" data-anim>Contents · 目录</div>
     <h2 class="h-xl" style="white-space:nowrap;font-size:min(4.5vw,8vh)" data-anim>轻轻一点，去哪一章</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8vh 2.2vw;align-content:start;flex:1;min-height:0;margin-top:.6vh"><div style="min-width:0">
+    <div class="toc-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8vh 2.2vw;align-content:start;flex:1;min-height:0;margin-top:.6vh"><div style="min-width:0">
           <div class="kicker" style="margin-bottom:.25vh">Part Ⅰ · MORPHOLOGY · WORD CLASSES · 词法篇</div>
           <button type="button" data-goto="m1-parts-of-speech" class="toc-row"><span class="toc-code">M01</span><span class="toc-cn">词性总览</span><span class="toc-en">Parts of Speech</span></button><button type="button" data-goto="m5-nouns" class="toc-row"><span class="toc-code">M02</span><span class="toc-cn">名词</span><span class="toc-en">Nouns</span></button><button type="button" data-goto="m6-articles" class="toc-row"><span class="toc-code">M03</span><span class="toc-cn">冠词</span><span class="toc-en">Articles</span></button><button type="button" data-goto="m7-pronouns" class="toc-row"><span class="toc-code">M04</span><span class="toc-cn">代词</span><span class="toc-en">Pronouns</span></button><button type="button" data-goto="pos-verbs" class="toc-row"><span class="toc-code">M05</span><span class="toc-cn">动词</span><span class="toc-en">Verbs</span></button><button type="button" data-goto="pos-adjectives" class="toc-row"><span class="toc-code">M06</span><span class="toc-cn">形容词</span><span class="toc-en">Adjectives</span></button><button type="button" data-goto="pos-adverbs" class="toc-row"><span class="toc-code">M07</span><span class="toc-cn">副词</span><span class="toc-en">Adverbs</span></button><button type="button" data-goto="pos-numerals" class="toc-row"><span class="toc-code">M08</span><span class="toc-cn">数词</span><span class="toc-en">Numerals</span></button><button type="button" data-goto="m24-prepositions" class="toc-row"><span class="toc-code">M09</span><span class="toc-cn">介词</span><span class="toc-en">Prepositions</span></button><button type="button" data-goto="m18-conjunctions" class="toc-row"><span class="toc-code">M10</span><span class="toc-cn">连词</span><span class="toc-en">Conjunctions</span></button>
         </div><div style="min-width:0">
@@ -654,7 +722,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>词性总览</h1>
     <h2 class="h-sub" data-anim>Parts of Speech</h2>
     <p class="lead" style="max-width:55vw" data-anim>十大词类，一张地图。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅰ · 词法篇 · 词性总览</div><div>— · —</div></div>
 </section>
@@ -793,7 +861,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>名词</h1>
     <h2 class="h-sub" data-anim>Nouns</h2>
     <p class="lead" style="max-width:55vw" data-anim>可不可数，差别很大。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅰ · 词法篇 · 名词</div><div>— · —</div></div>
 </section>
@@ -898,7 +966,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>冠词</h1>
     <h2 class="h-sub" data-anim>Articles</h2>
     <p class="lead" style="max-width:55vw" data-anim>小小 a / the，大大讲究。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅰ · 词法篇 · 冠词</div><div>— · —</div></div>
 </section>
@@ -995,7 +1063,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>代词</h1>
     <h2 class="h-sub" data-anim>Pronouns</h2>
     <p class="lead" style="max-width:55vw" data-anim>替名词出场的人。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅰ · 词法篇 · 代词</div><div>— · —</div></div>
 </section>
@@ -1092,7 +1160,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>动词</h1>
     <h2 class="h-sub" data-anim>Verbs</h2>
     <p class="lead" style="max-width:55vw" data-anim>句子的心脏，五副面孔。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅰ · 词法篇 · 动词</div><div>— · —</div></div>
 </section>
@@ -1201,7 +1269,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>形容词</h1>
     <h2 class="h-sub" data-anim>Adjectives</h2>
     <p class="lead" style="max-width:55vw" data-anim>给名词上色的人。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅰ · 词法篇 · 形容词</div><div>— · —</div></div>
 </section>
@@ -1306,7 +1374,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>副词</h1>
     <h2 class="h-sub" data-anim>Adverbs</h2>
     <p class="lead" style="max-width:55vw" data-anim>修饰动词与形容词。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅰ · 词法篇 · 副词</div><div>— · —</div></div>
 </section>
@@ -1411,7 +1479,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>数词</h1>
     <h2 class="h-sub" data-anim>Numerals</h2>
     <p class="lead" style="max-width:55vw" data-anim>数得清，才算数得明白。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅰ · 词法篇 · 数词</div><div>— · —</div></div>
 </section>
@@ -1516,7 +1584,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>介词</h1>
     <h2 class="h-sub" data-anim>Prepositions</h2>
     <p class="lead" style="max-width:55vw" data-anim>小词定乾坤。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅰ · 词法篇 · 介词</div><div>— · —</div></div>
 </section>
@@ -1616,7 +1684,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>连词</h1>
     <h2 class="h-sub" data-anim>Conjunctions</h2>
     <p class="lead" style="max-width:55vw" data-anim>把词与句粘起来。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅰ · 词法篇 · 连词</div><div>— · —</div></div>
 </section>
@@ -1709,7 +1777,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>句子成分</h1>
     <h2 class="h-sub" data-anim>Sentence Elements</h2>
     <p class="lead" style="max-width:55vw" data-anim>把句子拆成零件。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅱ · 句法篇 · 句子成分</div><div>— · —</div></div>
 </section>
@@ -1812,7 +1880,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>五种基本句型</h1>
     <h2 class="h-sub" data-anim>Five Basic Patterns</h2>
     <p class="lead" style="max-width:55vw" data-anim>所有长句都能长出。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅱ · 句法篇 · 五种基本句型</div><div>— · —</div></div>
 </section>
@@ -1899,7 +1967,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>There be 句型</h1>
     <h2 class="h-sub" data-anim>There Be Structure</h2>
     <p class="lead" style="max-width:55vw" data-anim>说「有」，用 there be。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅱ · 句法篇 · There be 句型</div><div>— · —</div></div>
 </section>
@@ -2004,7 +2072,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>句子的种类</h1>
     <h2 class="h-sub" data-anim>Simple · Compound · Complex</h2>
     <p class="lead" style="max-width:55vw" data-anim>一根梁，还是三根梁。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅱ · 句法篇 · 句子的种类</div><div>— · —</div></div>
 </section>
@@ -2103,7 +2171,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>疑问句</h1>
     <h2 class="h-sub" data-anim>Questions</h2>
     <p class="lead" style="max-width:55vw" data-anim>会问，才会交流。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅱ · 句法篇 · 疑问句</div><div>— · —</div></div>
 </section>
@@ -2204,7 +2272,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>动词时态</h1>
     <h2 class="h-sub" data-anim>The Twelve Tenses</h2>
     <p class="lead" style="max-width:55vw" data-anim>时间是动词的刻度。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅲ · 动词系统 · 动词时态</div><div>— · —</div></div>
 </section>
@@ -2337,7 +2405,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>情态动词</h1>
     <h2 class="h-sub" data-anim>Modal Verbs</h2>
     <p class="lead" style="max-width:55vw" data-anim>态度与可能性的开关。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅲ · 动词系统 · 情态动词</div><div>— · —</div></div>
 </section>
@@ -2430,7 +2498,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>被动语态</h1>
     <h2 class="h-sub" data-anim>Passive Voice</h2>
     <p class="lead" style="max-width:55vw" data-anim>谁做，还是谁被做。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅲ · 动词系统 · 被动语态</div><div>— · —</div></div>
 </section>
@@ -2524,7 +2592,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>非谓语动词</h1>
     <h2 class="h-sub" data-anim>to do · doing · done</h2>
     <p class="lead" style="max-width:55vw" data-anim>动词的三个分身。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅲ · 动词系统 · 非谓语动词</div><div>— · —</div></div>
 </section>
@@ -2638,7 +2706,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>虚拟语气</h1>
     <h2 class="h-sub" data-anim>Subjunctive Mood</h2>
     <p class="lead" style="max-width:55vw" data-anim>假如的世界。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅲ · 动词系统 · 虚拟语气</div><div>— · —</div></div>
 </section>
@@ -2732,7 +2800,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>直接与间接引语</h1>
     <h2 class="h-sub" data-anim>Reported Speech</h2>
     <p class="lead" style="max-width:55vw" data-anim>把别人的话转个头。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅲ · 动词系统 · 直接与间接引语</div><div>— · —</div></div>
 </section>
@@ -2831,7 +2899,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>名词性从句</h1>
     <h2 class="h-sub" data-anim>Noun Clauses</h2>
     <p class="lead" style="max-width:55vw" data-anim>把从句整个当名词。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅳ · 从句与一致 · 名词性从句</div><div>— · —</div></div>
 </section>
@@ -2924,7 +2992,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>定语从句</h1>
     <h2 class="h-sub" data-anim>Attributive Clauses</h2>
     <p class="lead" style="max-width:55vw" data-anim>跑到名词后面的形容词。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅳ · 从句与一致 · 定语从句</div><div>— · —</div></div>
 </section>
@@ -3017,7 +3085,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>状语从句</h1>
     <h2 class="h-sub" data-anim>Adverbial Clauses</h2>
     <p class="lead" style="max-width:55vw" data-anim>条件 · 原因 · 让步。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅳ · 从句与一致 · 状语从句</div><div>— · —</div></div>
 </section>
@@ -3110,7 +3178,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>主谓一致</h1>
     <h2 class="h-sub" data-anim>Subject-Verb Agreement</h2>
     <p class="lead" style="max-width:55vw" data-anim>主语和谓语，人数对齐。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅳ · 从句与一致 · 主谓一致</div><div>— · —</div></div>
 </section>
@@ -3203,7 +3271,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>比较等级</h1>
     <h2 class="h-sub" data-anim>Comparison</h2>
     <p class="lead" style="max-width:55vw" data-anim>谁比谁，更怎么样。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅴ · 特殊结构与实战 · 比较等级</div><div>— · —</div></div>
 </section>
@@ -3296,7 +3364,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>倒装句</h1>
     <h2 class="h-sub" data-anim>Inversion</h2>
     <p class="lead" style="max-width:55vw" data-anim>倒过来，更有劲。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅴ · 特殊结构与实战 · 倒装句</div><div>— · —</div></div>
 </section>
@@ -3389,7 +3457,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>强调句</h1>
     <h2 class="h-sub" data-anim>Emphasis</h2>
     <p class="lead" style="max-width:55vw" data-anim>把重点抬到台前。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅴ · 特殊结构与实战 · 强调句</div><div>— · —</div></div>
 </section>
@@ -3482,7 +3550,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>省略句</h1>
     <h2 class="h-sub" data-anim>Ellipsis</h2>
     <p class="lead" style="max-width:55vw" data-anim>能省则省，不碍理解。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅴ · 特殊结构与实战 · 省略句</div><div>— · —</div></div>
 </section>
@@ -3575,7 +3643,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>标点与大写</h1>
     <h2 class="h-sub" data-anim>Punctuation & Capitalization</h2>
     <p class="lead" style="max-width:55vw" data-anim>细节见功夫。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅴ · 特殊结构与实战 · 标点与大写</div><div>— · —</div></div>
 </section>
@@ -3677,7 +3745,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>高频易错点</h1>
     <h2 class="h-sub" data-anim>Common Mistakes</h2>
     <p class="lead" style="max-width:55vw" data-anim>中国学生的老坑。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅴ · 特殊结构与实战 · 高频易错点</div><div>— · —</div></div>
 </section>
@@ -3770,7 +3838,7 @@ keyframes lwa-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transfo
     <h1 class="h-hero" style="font-size:8vw" data-anim>题型速览</h1>
     <h2 class="h-sub" data-anim>Exam Question Types</h2>
     <p class="lead" style="max-width:55vw" data-anim>考场最爱怎么考。</p>
-    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">Outloopy ↖ 返回目录 · Contents</button></div>
+    <div data-anim style="margin-top:.5vh"><button type="button" data-goto="contents" class="bk">☰ 返回目录 · Contents</button></div>
   </div>
   <div class="foot"><div>Part Ⅴ · 特殊结构与实战 · 题型速览</div><div>— · —</div></div>
 </section>
@@ -6164,7 +6232,7 @@ function bootGL(canvasId, fsSrc){
   const lT=gl.getUniformLocation(prog,'u_time');
   const lM=gl.getUniformLocation(prog,'u_mouse');
   const resize=()=>{
-    const d=Math.min(window.devicePixelRatio||1,2);
+    const d=Math.min(window.devicePixelRatio||1,matchMedia('(pointer: coarse)').matches?1.5:2);
     canvas.width=innerWidth*d;canvas.height=innerHeight*d;
     gl.viewport(0,0,canvas.width,canvas.height);
   };
@@ -6195,8 +6263,25 @@ function stopGL(){
   if(glRAF) cancelAnimationFrame(glRAF);
   glRAF=0;
 }
-startGL();
-addEventListener('ppt-low-power-change', e=>{e.detail.on ? stopGL() : startGL();});
+/* v3:按设备能力门控 —— 触屏 / 小屏 / 低内存 = 静态单帧,不再逐帧渲染 */
+const __quietDevice = matchMedia('(pointer: coarse)').matches
+  || Math.min(screen.width, screen.height) < 740
+  || (navigator.deviceMemory && navigator.deviceMemory <= 4);
+function drawGLOnce(){
+  try{
+    if(!drawDark) drawDark = bootGL('bg-dark', FS_DARK);
+    if(!drawLight) drawLight = bootGL('bg-light', FS_LIGHT);
+    drawDark(0); drawLight(0);
+  }catch(e){}
+}
+function startGLSmart(){ if(__quietDevice){ drawGLOnce(); return; } startGL(); }
+addEventListener('resize', ()=>{ if(__quietDevice && !glRAF) drawGLOnce(); });
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden){ stopGL(); }
+  else if(!__quietDevice && !window.__lowPowerMode){ startGL(); }
+});
+startGLSmart();
+addEventListener('ppt-low-power-change', e=>{ e.detail.on ? stopGL() : startGLSmart(); });
 
 // =============== 导航（翻页 / 圆点 / 键盘 / 滚轮 / 触屏） ===============
 const deck=document.getElementById('deck');
@@ -6778,6 +6863,8 @@ addEventListener('keydown',e=>{
 
 let wheelTO=null,wheelAcc=0;
 addEventListener('wheel',e=>{
+  const sf=e.target&&e.target.closest?e.target.closest('.slide .frame'):null;
+  if(sf&&sf.scrollHeight>sf.clientHeight+2){wheelAcc=0;return;}
   wheelAcc+=e.deltaY+e.deltaX;
   if(Math.abs(wheelAcc)>50){
     if(wheelAcc>0 && window.__pipeAdvance && window.__pipeAdvance()){
@@ -6806,128 +6893,83 @@ const initialSlide = initialSlideParam ? Number(initialSlideParam) - 1 : 0;
 go(Number.isFinite(initialSlide) ? initialSlide : 0);
 window.__pptPresenter?.initMode();
 </script>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<script>lucide.createIcons();</script>
 
-<!-- ============ Motion One 动效引擎（本地优先,CDN 兜底） ============
-     加载策略:先 ./assets/motion.min.js(本地,离线可用),失败 fallback 到 jsDelivr CDN
-     加载完成后挂 window.__playSlide / window.__pipeAdvance,
-     导航脚本会在翻页中段调用 __playSlide(idx),键盘/滚轮/触屏会在翻页前调用 __pipeAdvance()
-     双双失败时会兜底把所有 [data-anim] 设为可见,不让动效破坏阅读
+<!-- ============ 内置动效引擎(原生 WAAPI · 零外部依赖) ============
+     行为与原 Motion One 版一致:翻页中段触发当前页 [data-anim] 入场;
+     低功耗模式(B)或 prefers-reduced-motion 下静态显示;
+     无 CDN / 无外部脚本,离线双击打开动效同样完整。
 -->
-<script type="module">
-let motion;
-try {
-  motion = await import('./assets/motion.min.js');
-} catch(e1) {
-  try {
-    motion = await import('https://cdn.jsdelivr.net/npm/motion@11.11.17/+esm');
-  } catch(e2) {
-    console.warn('[motion] local + CDN both failed, disabling animations', e1, e2);
-    document.querySelectorAll('[data-anim]').forEach(el=>{el.style.opacity='1';el.style.transform='none'});
-    document.querySelectorAll('[data-animate="pipeline"] [data-anim]').forEach(el=>el.style.opacity='1');
-  }
-}
-
-if(motion){
-  const { animate, stagger } = motion;
+<script>
+(function(){
+  if(!Element.prototype.animate) return; /* 远古浏览器:不动效,CSS 兜底显示 */
   document.body.classList.add('motion-ready');
-  const EASE = [.22, 1, .36, 1];
-  const slides = [...document.querySelectorAll('.slide')];
-  let pipeStep = -1;
-  let lastIdx = -1;
-
-  function resetAnims(slide){
-    slide.querySelectorAll('[data-anim]').forEach(el=>{
-      el.style.opacity='';
-      el.style.transform='';
+  var EASE='cubic-bezier(.22,1,.36,1)';
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var pipeStep=-1,lastIdx=-1;
+  function kill(el){ if(el.getAnimations) el.getAnimations().forEach(function(a){a.cancel();}); }
+  function resetAnims(sl){ sl.querySelectorAll('[data-anim]').forEach(function(el){kill(el);el.style.opacity='';el.style.transform='';}); }
+  function revealStatic(sl){ sl.querySelectorAll('[data-anim]').forEach(function(el){kill(el);el.style.opacity='1';el.style.transform='none';}); }
+  function anim(els,from,to,dur,delayBase,step){
+    els.forEach(function(el,i){
+      el.animate([from,to],{duration:dur*1000,delay:(delayBase+i*step)*1000,easing:EASE,fill:'both'});
     });
   }
-
-  function revealStatic(slide){
-    resetAnims(slide);
-    document.getAnimations?.().forEach(a=>a.cancel());
-    slide.querySelectorAll('[data-anim]').forEach(el=>{
-      el.style.opacity='1';
-      el.style.transform='none';
-    });
-  }
-
   function playSlide(i){
-    const slide = slides[i];
-    if(!slide) return;
-    lastIdx = i;
-    const recipe = slide.dataset.animate || (slide.classList.contains('hero') ? 'hero' : 'cascade');
-
-    if(window.__lowPowerMode){
-      revealStatic(slide);
+    var sl=slides[i]; if(!sl) return;
+    lastIdx=i;
+    var recipe=sl.dataset.animate||(sl.classList.contains('hero')?'hero':'cascade');
+    if(window.__lowPowerMode){ revealStatic(sl); return; }
+    if(recipe==='pipeline'){
+      pipeStep=-1;
+      sl.querySelectorAll('[data-anim]').forEach(function(el){el.style.opacity='0.15';el.style.transform='none';});
       return;
     }
-
-    if(recipe === 'pipeline'){
-      pipeStep = -1;
-      slide.querySelectorAll('[data-anim]').forEach(el=>{
-        el.style.opacity='0.15';
-        el.style.transform='none';
-      });
-      return;
-    }
-
-    resetAnims(slide);
-    const all = [...slide.querySelectorAll('[data-anim]')];
+    resetAnims(sl);
+    var all=[].slice.call(sl.querySelectorAll('[data-anim]'));
     if(!all.length) return;
-
-    if(recipe === 'directional'){
-      const lefts  = all.filter(el=>el.dataset.anim==='left');
-      const divs   = all.filter(el=>el.dataset.anim==='divider');
-      const rights = all.filter(el=>el.dataset.anim==='right');
-      const others = all.filter(el=>!['left','right','divider'].includes(el.dataset.anim));
-      if(others.length) animate(others, {opacity:[0,1], y:[12,0]}, {duration:.6, delay:stagger(.1, {start:.15}), easing:EASE});
-      if(lefts.length)  animate(lefts,  {opacity:[0,1], x:[-24,0]}, {duration:.8, delay:.35, easing:EASE});
-      if(divs.length)   animate(divs,   {opacity:[0,.25]},          {duration:.5, delay:.9});
-      if(rights.length) animate(rights, {opacity:[0,1], x:[24,0]},  {duration:.8, delay:1.0, easing:EASE});
+    if(recipe==='directional'){
+      var lefts=all.filter(function(el){return el.dataset.anim==='left';});
+      var divs=all.filter(function(el){return el.dataset.anim==='divider';});
+      var rights=all.filter(function(el){return el.dataset.anim==='right';});
+      var others=all.filter(function(el){return ['left','right','divider'].indexOf(el.dataset.anim)<0;});
+      if(others.length) anim(others,{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'},.6,.15,.1);
+      if(lefts.length) anim(lefts,{opacity:0,transform:'translateX(-24px)'},{opacity:1,transform:'translateX(0)'},.8,.35,0);
+      if(divs.length) anim(divs,{opacity:0},{opacity:.25},.5,.9,0);
+      if(rights.length) anim(rights,{opacity:0,transform:'translateX(24px)'},{opacity:1,transform:'translateX(0)'},.8,1.0,0);
       return;
     }
-
-    if(recipe === 'quote'){
-      const lines = all.filter(el=>el.dataset.anim==='line');
-      const others = all.filter(el=>el.dataset.anim!=='line');
-      if(others.length) animate(others, {opacity:[0,1], y:[8,0]},    {duration:.6, delay:stagger(.12, {start:.2}), easing:EASE});
-      if(lines.length)  animate(lines,  {opacity:[.35,1], y:[10,0]}, {duration:.8, delay:stagger(.55, {start:.5}), easing:EASE});
+    if(recipe==='quote'){
+      var lines=all.filter(function(el){return el.dataset.anim==='line';});
+      var rest=all.filter(function(el){return el.dataset.anim!=='line';});
+      if(rest.length) anim(rest,{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'},.6,.2,.12);
+      if(lines.length) anim(lines,{opacity:.35,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'},.8,.5,.55);
       return;
     }
-
-    if(recipe === 'hero'){
-      animate(all, {opacity:[0,1], y:[14,0]}, {duration:.9, delay:stagger(.16, {start:.2}), easing:EASE});
-      return;
-    }
-
-    // default: cascade
-    animate(all, {opacity:[0,1], y:[16,0]}, {duration:.75, delay:stagger(.1, {start:.15}), easing:EASE});
+    if(recipe==='hero'){ anim(all,{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'translateY(0)'},.9,.2,.16); return; }
+    anim(all,{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'translateY(0)'},.75,.15,.1);
   }
-
   function pipeAdvance(){
     if(window.__lowPowerMode) return false;
-    const slide = slides[lastIdx];
-    if(!slide || slide.dataset.animate !== 'pipeline') return false;
-    const steps  = [...slide.querySelectorAll('[data-anim="step"]')];
-    const arrows = [...slide.querySelectorAll('[data-anim="arrow"]')];
-    if(pipeStep >= steps.length - 1) return false;
+    var sl=slides[lastIdx];
+    if(!sl||sl.dataset.animate!=='pipeline') return false;
+    var steps=[].slice.call(sl.querySelectorAll('[data-anim="step"]'));
+    var arrows=[].slice.call(sl.querySelectorAll('[data-anim="arrow"]'));
+    if(pipeStep>=steps.length-1) return false;
     pipeStep++;
-    animate(steps[pipeStep], {opacity:[0.15,1], y:[8,0]}, {duration:.5, easing:EASE});
-    if(pipeStep > 0 && arrows[pipeStep-1]){
-      animate(arrows[pipeStep-1], {opacity:[0.15,.7]}, {duration:.3, delay:.15});
-    }
+    anim([steps[pipeStep]],{opacity:.15,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'},.5,0,0);
+    if(pipeStep>0&&arrows[pipeStep-1]) anim([arrows[pipeStep-1]],{opacity:.15},{opacity:.7},.3,.15,0);
     return true;
   }
-
-  window.__playSlide = playSlide;
-  window.__pipeAdvance = pipeAdvance;
-
-  // 首屏:go() 已跑过(同步),没来得及触发动效 → 这里补一下(尊重 ?slide=N)
-  playSlide(window.__currentSlideIndex || 0);
-}
+  window.__playSlide=playSlide;
+  window.__pipeAdvance=pipeAdvance;
+  playSlide(window.__currentSlideIndex||0);
+})();
 </script>
+
+<div id="nav-back">
+  <button type="button" data-goto="cover">⌂ 首页</button>
+  <button type="button" data-goto="contents">☰ 目录</button>
+</div>
 
 <script>
 (function(){
@@ -6945,12 +6987,43 @@ if(motion){
     }
     var g = e.target.closest('[data-goto]');
     if(!g) return;
-    if(!g) return;
     e.preventDefault();
     var id = g.getAttribute('data-goto');
     var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
     var i = slides.findIndex(function(s){return s.getAttribute('data-slide-id')===id;});
     if(i>=0 && window.go) go(i,{force:true});
+  });
+})();
+/* 圆点窗口化:页数多时只显示当前页附近的圆点(首尾常驻),避免溢出屏幕 */
+(function(){
+  var dots = Array.prototype.slice.call(document.querySelectorAll('#nav .dot'));
+  if(!dots.length) return;
+  var cur = 0;
+  function upd(){
+    dots.forEach(function(d,i){
+      d.style.display = (i===0 || i===dots.length-1 || Math.abs(i-cur)<=5) ? '' : 'none';
+    });
+  }
+  var _go = window.go;
+  if(_go){
+    window.go = function(n,o){ var r=_go(n,o); cur=Math.max(0,Math.min(dots.length-1,n)); upd(); return r; };
+  }
+  upd();
+})();
+/* 移动端翻页/总览悬浮球(桌面 CSS 隐藏) */
+(function(){
+  var box = document.createElement('div');
+  box.id = 'mob-nav';
+  box.innerHTML =
+    '<button type="button" id="mob-prev" aria-label="上一页">&#8249;</button>' +
+    '<button type="button" id="mob-grid" aria-label="总览选页">&#9776;</button>' +
+    '<button type="button" id="mob-next" aria-label="下一页">&#8250;</button>';
+  document.body.appendChild(box);
+  box.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    if(b.id === 'mob-prev') go(idx-1);
+    else if(b.id === 'mob-next') go(idx+1);
+    else if(b.id === 'mob-grid' && window.toggleOverview) toggleOverview();
   });
 })();
 </script>

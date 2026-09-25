@@ -2,7 +2,8 @@
 
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/Content-CC_BY--SA_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
 [![Template: AGPL-3.0](https://img.shields.io/badge/Template-AGPL--3.0-blue.svg)](./template/README.md)
-[![Slides](https://img.shields.io/badge/Slides-167-green.svg)](./ppt/index.html)
+[![Slides](https://img.shields.io/badge/Slides-167-green.svg)](./index.html)
+[![Platforms](https://img.shields.io/badge/Platforms-phone%20%7C%20tablet%20%7C%20desktop-blueviolet.svg)](./index.html)
 
 一套**单文件、零依赖、免费开源**的高校英语语法双语教学课件（网页 PPT）。面向英语基础较弱的中国学生（高职 / 专升本 / 大学基础段），中文讲规则、英文给例句，教室投影后排也能看清。
 
@@ -20,20 +21,23 @@ A single-file, zero-dependency, open-source **bilingual (Chinese–English) Engl
 - **随时跳转 / jump anywhere**：首页 ＋ 目录页 ＋ 左上角常驻「⌂ 首页 / ☰ 目录」按钮，任何页面一键返回；每个模块可独立开讲，适合多课时拆分使用。
 - **演讲者模式 / presenter mode**：按 `P` 打开（左预览 + 右备注，备注可现场编辑并自动保存）；`ESC` 总览、`B/W` 黑白屏、`F` 冻结、`L/C` 激光笔与圈选。
 - **大字号投影友好 / projector-friendly**：字号同时按视口宽高自适应封顶，从超宽屏到笔记本浏览器实测无文字裁切。
+- **多平台适配 / multi-platform**：安卓 / iOS 手机、各平台平板、桌面端全适配——窄屏自动进入「滚动阅读模式」（单列网格、页面内可上下滚动、刘海屏安全区、`100dvh` 地址栏修正），并提供触屏翻页悬浮球；桌面端布局不受影响。
+- **轻量 · 零外部依赖 / lightweight, zero external dependencies**：仍是单文件 HTML（约 570KB），不引用任何 CDN 脚本；动效由原生 WAAPI 驱动（离线可用），网页字体异步加载、被墙/离线自动回退系统字体；手机与旧电脑自动降低动画与渲染开销（WebGL 背景按设备能力门控）。
 
 ## 🚀 使用 / Usage
 
-无需安装任何东西：**直接下载 [`index.html`](./index.html)，双击用浏览器打开即可上课。**（仓库根目录即最终课件，可直接部署到 EdgeOne Pages / GitHub Pages 等静态托管）
+无需安装任何东西：**直接下载 [`index.html`](./index.html)，双击用浏览器打开即可上课。**（仓库根目录即最终课件，可直接部署到 EdgeOne Pages / GitHub Pages 等静态托管；手机浏览器同样可以直接打开）
 
-No installation needed: just download `ppt/index.html` and open it in a browser.
+No installation needed: just download `index.html` and open it in a browser — desktop or phone.
 
 | 操作 / Action | 方式 / How |
 |---|---|
-| 翻页 / navigate | `←` `→` / 滚轮 / 触屏 / 底部圆点 |
+| 翻页 / navigate | `←` `→` / 滚轮 / 触屏滑动 / 底部圆点；手机用右下角悬浮球 `‹` `›` |
 | 回首页·目录 / home·contents | 左上角 `⌂ 首页` `☰ 目录` |
-| 总览选页 / overview | `ESC` |
+| 总览选页 / overview | `ESC`；手机用悬浮球 `☰` |
 | 演讲者模式 / presenter mode | 右下角 `P`（备注可编辑、自动保存 / notes editable & autosaved） |
 | 黑屏·白屏 / blackout | `B` / `W` |
+| 手机阅读 / mobile reading | 窄屏自动进入滚动阅读模式，每页内可上下滑动；再横向滑动即翻页 |
 
 ## 🛠 本地重建 / Rebuild locally
 
